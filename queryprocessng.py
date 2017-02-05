@@ -4,20 +4,24 @@ import sys
 
 def insertval(tablename,valtoinsert):
 	fout = open("updatetable.sql",'a');
-	if(tablename == "facinfo"):
-		query ="INSERT INTO "+tablename+"(fac_name,email,phone,responsibility,website,designation) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[3]+"\",\""+valtoinsert[4]+"\",\""+valtoinsert[2]+"\",\""+valtoinsert[5]+"\",\""+valtoinsert[1]+"\");\n"
+	if(tablename == "faculty_info"):
+		query ="INSERT INTO "+tablename+"(faculty_name,email,phone,responsibility,website,designation) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[3]+"\",\""+valtoinsert[4]+"\",\""+valtoinsert[2]+"\",\""+valtoinsert[5]+"\",\""+valtoinsert[1]+"\");\n"
 		fout.write(query)
 		return
 	elif(tablename == "publications"):
-		query ="INSERT INTO "+tablename+"(fac_name,pub_year,pub_title) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\",\""+valtoinsert[2]+"\");\n"
+		query ="INSERT INTO "+tablename+"(faculty_name,pub_year,pub_title) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\",\""+valtoinsert[2]+"\");\n"
 		fout.write(query)
 		return
 	elif(tablename == "projects"):
-		query ="INSERT INTO "+tablename+"(fac_name,project_title) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\");\n"
+		query ="INSERT INTO "+tablename+"(faculty_name,project_title) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\");\n"
 		fout.write(query)
 		return
 	elif(tablename == "students"):
-		query ="INSERT INTO "+tablename+"(fac_name,student_name,student_type,std_research_area) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\",\""+valtoinsert[2]+"\",\""+valtoinsert[3]+"\");\n"
+		query ="INSERT INTO "+tablename+"(faculty_name,student_name,student_type,std_research_area) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\",\""+valtoinsert[2]+"\",\""+valtoinsert[3]+"\");\n"
+		fout.write(query)
+		return
+	elif(tablename == "awards"):
+		query ="INSERT INTO "+tablename+"(faculty_name,award) VALUES(\""+valtoinsert[0]+"\",\""+valtoinsert[1]+"\");\n"
 		fout.write(query)
 		return
 	fout.close()
@@ -58,8 +62,12 @@ def runquery(fname):
 					break
 				if(line == "" or line == "\n"):
 					break;
-			insertval("facinfo",valtoinsert)
-		
+			insertval("faculty_info",valtoinsert)
+		if("AWARDS" in line):
+			line = file.readline()
+			valtoinsert = [fac_name,line.rstrip('\n\r')]
+			insertval("awards",valtoinsert)
+			line = file.readline()
 		if("PUBLICATIONS" in line):
 			line = file.readline()
 			while("PROJECTS\n" not in line):
@@ -84,28 +92,39 @@ def runquery(fname):
 			line = file.readline()
 			if("PhD STUDENTS\n" in line):	
 				line = file.readline()
-				while("MS STUDENTS" not in line ):
-					data=line.split("Area of Research:")
-					line = file.readline()
-					valtoinsert=[fac_name,data[0].rstrip('\n\r'),"Ph.D. Student",data[1].rstrip('\n\r')]
-					insertval("students",valtoinsert)
-					line = file.readline()
-					if(line == "" or line =='\n'):
+				while("MS STUDENTS" not in line or line != "" ):
+					if("Area of Research:" in line):
+						data=line.split("Area of Research:")
+						line = file.readline()
+						valtoinsert=[fac_name,data[0].rstrip('\n\r'),"Ph.D. Student",data[1].rstrip('\n\r')]
+						insertval("students",valtoinsert)
+						line = file.readline()
+						if(line == "" or line =='\n'):
+							break;
+					else:
 						break;
 			if("MS STUDENTS\n" in line):
 				line = file.readline()
 				while(line != ""):
-					data = line.split("Area of Research:")
-					line = file.readline()
-					valtoinsert=[fac_name,data[0].rstrip('\n\r'),"MS Student",data[1].rstrip('\n\r')]
-					insertval("students",valtoinsert)
-					line = file.readline()
-					if(line == "" or line =='\n'):
-						break;
+					if("Area of Research:" in line):
+						data = line.split("Area of Research:")
+						line = file.readline()
+						valtoinsert=[fac_name,data[0].rstrip('\n\r'),"MS Student",data[1].rstrip('\n\r')]
+						insertval("students",valtoinsert)
+						line = file.readline()
+						if(line == "" or line =='\n'):
+							break
+					else:
+						break
 		line =file.readline()
 
+str = "delete from faculty_info where 1; delete from projects where 1; delete from publications where 1; delete from students where 1; delete from awards where 1;\n"
+
 def main(): 
-	os.remove('updatetable.sql')
+	#os.remove('updatetable.sql')
+	f = open("updatetable.sql","w")
+	f.write(str)
+	f.close()
 	profs = os.listdir('./databaseinp')
 	#runquery("./databaseinp/anupam.csv")
 	for p in profs:
