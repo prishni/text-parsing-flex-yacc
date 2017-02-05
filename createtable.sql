@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS facinfo (
+CREATE TABLE IF NOT EXISTS faculty_info (
   fac_id INT NOT NULL AUTO_INCREMENT,
   fac_name VARCHAR(256),
   email VARCHAR(256),
