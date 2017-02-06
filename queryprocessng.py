@@ -66,9 +66,20 @@ def runquery(fname):
 					break;
 		if("AWARDS" in line):
 			line = file.readline()
-			valtoinsert = [fac_name,line.rstrip('\n\r')]
-			insertval("awards",valtoinsert)
-			line = file.readline()
+			turn =1
+			while("RESEARCH\n" not in line or line != ""):
+				if(line == "\n"):
+					line = file.readline()
+					continue
+				line =line.replace("<li>","")
+				line =line.replace("</li>","")
+				valtoinsert= [fac_name,line.rstrip('\n\r')]
+				if(turn == 1 ):
+					insertval("awards",valtoinsert)
+				turn = not(turn)
+				line = file.readline()
+				if("RESEARCH" in line):
+					break
 		if("RESEARCH" in line):
 			line = file.readline()
 			while(line == '\n' or line == '\t'):

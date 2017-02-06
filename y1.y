@@ -49,6 +49,41 @@ start:
         | start chr  
         | start publist  
         ;
+name:
+        NAME { 
+               fprintf(out,"NAME$%s\n",$1);
+        }
+        ;
+phone:
+        PHONE { 
+                fprintf(out,"PHONE$%s\n",$1);
+        }
+        ;
+award:
+        AWARD { 
+                fprintf(out,"%s\n",$1);
+        }
+        ;        
+email: 
+        EMAIL {
+                fprintf(out,"EMAIL$%s\n",$1);
+        }
+        ;
+desg: 
+        DESG {
+                fprintf(out,"DESG$%s\n",$1);
+        }
+        ;
+web:   
+        WEB {
+                fprintf(out,"WEB$%s\n",$1); fflush(NULL); 
+        }
+        ;  
+resp: 
+        RESP {
+                fprintf(out,"RESP$%s\n",$1);
+        }
+        ;
 publist:
         PBEGIN chr PEND {
                //char *text1 = malloc(sizeof(char)*(strlen($2)+2));
@@ -91,39 +126,5 @@ info:   name
         | email
         | resp
         ;
-name:
-        NAME { 
-               fprintf(out,"NAME$%s\n",$1);
-        }
-        ;
-phone:
-        PHONE { 
-                fprintf(out,"PHONE$%s\n",$1);
-        }
-        ;
-award:
-        AWARD { 
-                fprintf(out,"%s\n",$1);
-        }
-        ;        
-email: 
-        EMAIL {
-                fprintf(out,"EMAIL$%s\n",$1);
-        }
-        ;
-desg: 
-        DESG {
-                fprintf(out,"DESG$%s\n",$1);
-        }
-        ;
-web:   
-        WEB {
-                fprintf(out,"WEB$%s\n",$1); fflush(NULL); 
-        }
-        ;  
-resp: 
-        RESP {
-                fprintf(out,"RESP$%s\n",$1);
-        }
-        ;
+
 %%

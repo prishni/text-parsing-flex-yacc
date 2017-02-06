@@ -77,24 +77,26 @@ extern FILE *out;
 
 \<p[ \r]class=\"text-justify\"\>[ \t\r\n]*\<span[ \r]class=\"glyphicon[ \r]glyphicon-circle-arrow-right\"\>\<\/span\>([ \r\t\n]|.)*resp-tab2  {
 																																					char *data = strdup(yytext);
-																																					char processed_data[2000];
+																																					char processed_data[5000];
 																																					int index1= (int)(strstr(data,"</span>")-data)+9;
 																																					int index2 = (int)(strstr(data,"</div>")-data);
 																																					memcpy( processed_data, &data[index1], index2-index1 );
 																																					processed_data[index2-index1]='\0';
 																																					yylval.str = strdup(processed_data);
+																																					printf("%s\n",yylval.str);
 																																					fprintf(out, "RESEARCH\n%s\nPUBLICATIONS\n",yylval.str);
 																																					fflush(NULL); 
 																																					} 
 
-\<div[ \r]style=\"height:[ \r]0px;\"[ \r]id=\"collapseseven\"[ \r]class=\"accordion-body[ \r]collapse\"\>[ \r\t\n]*\<div[ \r]class=\"accordion-inner\"\>[ \r\t\n]*\<ul\>[ \r\t\n]*\<li\>.*\<\/li\>  {
+\<div[ \r]style=\"height:[ \r]0px;\"[ \r]id=\"collapseseven\"[ \r]class=\"accordion-body[ \r]collapse\"\>[ \r\t\n]*\<div[ \r]class=\"accordion-inner\"\>[ \r\t\n]*\<ul\>[ \r\t\n]*(\<li\>.*\<\/li\>|[ \t\n\r])*\<\/ul\>  {
 																																						char *data = strdup(yytext);
 																																						char processed_data[500];
 																																						int index1= (int)(strstr(data,"<li>")-data)+4;
-																																						int index2 = (int)(strstr(data,"</li>")-data);
+																																						int index2 = (int)(strstr(data,"</ul>")-data);
 																																						memcpy( processed_data, &data[index1], index2-index1 );
 																																						processed_data[index2-index1]='\0';
 																																						yylval.str = strdup(processed_data);
+																																						printf("%s\n",yylval.str);
 																																						fprintf(out, "AWARDS\n");
 																																						return AWARD;
 																																						} 
